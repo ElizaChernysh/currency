@@ -2,17 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import { Provider } from "react-redux";
-// import store from "./store";
+import { Provider } from "react-redux";
+import { setupStore } from './store/store';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+const store = setupStore();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <Provider store={store}> */}
+    <Provider store={store}>
       <App />
-    {/* </Provider> */}
+    </Provider>
   </React.StrictMode>
 );
 
