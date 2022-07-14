@@ -1,55 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { getCurrencyFromServer } from './api';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-// import CurrencyRow from './CurrencyRow';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAmount, setCurrencyOption, loadCurrency} from './store/reducers/currencyReducer';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-// import CurrencyRow from './CurrencyRow';
 
-// const API_KEY = 'JPfcWkIptzQGfEMi4px2c5HYyZcbyj79';
-// const BASE_URL =`https://api.exchangeratesapi.io/v1/latest?access_key=${API_KEY}`;
-// const BASE_URL = 'https://api.exchangerate.host/latest';
 
 function App() {
-  const [currencyOptions, setCurrencyOptions] = useState([]);
-  const [key, setKey] = useState('UAH-EUR');
-  const [amount, setAmount] = useState(1);
-  const [fromAmount, setFromAmount ] = useState();
-  const [resultAmount, setResultAmount] = useState();
-  const [toAmount, setToAmound] = useState();
-  // const [isVisible, setIsVisible] = useState(false);
-  // const [amountInFromCurrency, setAmountInFromCurrency] = useState(true);
-  // const [exchangeRate, setExchangeRate] = useState();
-  console.log(currencyOptions);
-  console.log(fromAmount);
-  console.log(toAmount);
+  const [value, setValue] = useState('');
 
-
-  const doConvert = () => {
-    let result;
-    if (key === 'UAH-EUR') {
-      result = (Number(amount) / fromAmount).toFixed(3);
-    };
-
-    if (key === 'UAH-USD') {
-      result = (Number(amount) / fromAmount).toFixed(3);
-    };
-
-    setResultAmount(result);
-  }
+  const dispatch = useDispatch();
+  const money = useSelector(state => state.currency.money);
+  const currencyOption = useSelector(state => state.currency.currentCurrencyOption);
+  const currency = useSelector(state => state.currency.currency);
 
   useEffect(() => {
     getCurrencyFromServer()
       .then(data => {
-        // const 
-        // const firstCurrency = data.rates;
-        setCurrencyOptions([data.base, ...Object.keys(data.rates)])
-        setFromAmount(data.rates.UAH);
-        setToAmound(data.rates.EUR);
-        // setExchangeRate(data.rates[firstCurrency]);
-        console.log(data);
+        dispatch(loadCurrency(data.rates));
+        console.log(data.rates);
       })
-  }, []);
+  }, [dispatch]);
+
+  const openResult = () => {
+    const moneys = value;
+
+    dispatch(getAmount(moneys));
+    setValue('');
+  };
 
   return (
     <div className="App">
@@ -57,15 +37,16 @@ function App() {
 
       <Tabs
         id="controlled-tab-example"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
+        activeKey={currencyOption}
+        // onSelect={(k) => dispatch(setCurrencyOption(k))}
+        onSelect={(k) => dispatch(setCurrencyOption(k))}
         className="mb-3"
       >
-        <Tab eventKey="UAH-EUR" title="UAH-EUR">
+        <Tab eventKey="EUR" title="UAH-EUR">
         </Tab>
-        <Tab eventKey="UAH-USD" title="UAH-USD">
+        <Tab eventKey="USD" title="UAH-USD">
         </Tab>
-        <Tab eventKey="UAH-PLN" title="UAH-PLN">
+        <Tab eventKey="PLN" title="UAH-PLN">
         </Tab>
       </Tabs>
 
@@ -73,15 +54,24 @@ function App() {
         <input 
           type="number" 
           className="input" 
-          value={amount} 
-          onChange={(e) => setAmount(e.target.value)} 
+          value={value}
+          onChange={(e) => setValue(e.target.value)} 
         />
+        <button type="button" onClick={openResult}>Add</button>
 
-        {/* <p className='result'>{amount} UAH  - {(Number(amount) / fromAmount).toFixed(3)} EUR</p> */}
-        <p className='result'>{amount} UAH  - {resultAmount} EUR</p>
+        {money > 0 && 
+           <p 
+             className='result'
+            >
+              {money} UAH
+              {' - '} 
+              {/* {money.toAmount} {currencyOption} */}
+              {(money * currency[currencyOption]).toFixed(3)} {currencyOption}
+
+            </p>
+        }
+       
       </div>
-
-      <button type='button' onClick={doConvert}>Convert</button>
     </div>
   );
 }
