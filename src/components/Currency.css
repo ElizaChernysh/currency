@@ -1,0 +1,9 @@
+.Currency {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Currency__title {
+  margin-bottom: 40px;
+}

@@ -3,7 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   currency: [],
   money: '',
-  resultAmout: '',
   currentCurrencyOption: "EUR",
 };
 
@@ -25,6 +24,6 @@ export const currencySlice = createSlice({
   },
 });
 
-export const { loadCurrency, setCurrencyOption, getAmount, updateAmount
+export const { loadCurrency, setCurrencyOption, getAmount
 } = currencySlice.actions;
 export default currencySlice.reducer;
